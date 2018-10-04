@@ -23,53 +23,53 @@ mutate(
 )
 ```
 
-This dataset contains variables `names(nyc_data) `
+```{r}
+#new dataset variables
+names(nyc_data) 
+#The dimension of the resulting dataset
+print("rows:")
+nrow(nyc_data)
+print("columns:")
+ncol(nyc_data)
 
-my data cleaning steps: 1.change the variables names. 2.select the specific variables according to the requirement. 3.change the type of the data in "entry"
+```
 
-The dimension of the resulting dataset is `nrow(nyc_data)` rows * `ncol(nyc_data)` columns
-
-These data is not tidy enough, I suggest to gather all of the routes into one variable so I put related codes in the comment lines.
+This dataset contains variables:
+line,station name,station latitude,station longitude,route1,route2,route3,route4,route5,route6,route7,route8,route9,route10,route11,entrance type,entry,vending,ada. My data cleaning steps: 1.Change the variables names. 2.Select the specific variables according to the requirement. 3.Change the type of the data in "entry". The dimension of the resulting dataset is 1868 rows * 19 columns.These data is not tidy enough, I suggest to gather all of the routes into one variable so I put related codes in the comment lines.
 
 ```{r}
 ##The number of distinct stations:
 #select the variables that can identify stations
-n_station = select(nyc_data,station_name,route1:route11)
-nrow(distinct(n_station))
-#The number of stations that are ADA compliant
-ada_compliant = filter(nyc_data, ada=="TRUE") 
+n_station = select(nyc_data,line,station_name,ada) %>% 
+distinct()
+nrow(n_station)
+##The number of stations that are ADA compliant
+ada_compliant = filter(n_station, ada=="TRUE") 
   nrow(ada_compliant)
-#
+##The proportion of station entrances / exits without vending allow entrance
+nrow(filter(nyc_data,vending=="NO",entry=="TRUE"))/nrow(filter(nyc_data,vending=="NO"))
 
 ```
-There are 457 distinct stations, and there are 468 stations that are ADA compliant.
+There are 465 distinct stations, and there are 84 stations that are ADA compliant.The proportion of station entrances / exits without vending allow entrance is 0.377.
 
-
-```{r}
-#The proportion of station entrances / exits without vending allow entrance
-nrow(filter(nyc_data,vending=="NO"))/nrow(nyc_data)
-#
-```
-
-Reformat data so that route number and route name are distinct variables. How many distinct stations serve the A train? Of the stations that serve the A train, how many are ADA compliant?
 ```{r}
 #Reformat data so that route number and route name are distinct variables
 new_nyc_data = nyc_data %>% 
 gather(key="route_name", value = "route_number",route1:route11 ) %>% 
 #Number of Dinstinct stations that serve the A train
-select(station_name, route_name, route_number,ada) %>% 
+select(line,station_name, route_name, route_number,ada) %>% 
   #filte A train
   filter(route_number == "A") 
   #count distinct station serving A train
-  A_station = distinct(select(new_nyc_data,-ada)) 
+  A_station = distinct(new_nyc_data,line,station_name,.keep_all = TRUE) 
   nrow(A_station)
 # carculate number  of  ADA compliant in stations serving A train
-  nrow(filter(new_nyc_data,ada=="TRUE"))
+  nrow(filter(A_station,ada=="TRUE"))
 # carculate proportion of  ADA compliant in stations serving A train
-  nrow(filter(new_nyc_data,ada=="TRUE"))/nrow(new_nyc_data)
+  nrow(filter(A_station,ada=="TRUE"))/nrow(A_station)
 ```
-56 distinct stations that serve the A train
-Of the stations that serve the A train, the number of ada compliant stations serving A train is , and the proportion of ADA compliant is 0.3919414.
+60 distinct stations that serve the A train
+Of the stations that serve the A train, the number of ada compliant stations serving A train is , and the proportion of ADA compliant is 0.283.
 
 ##problem 2
 
