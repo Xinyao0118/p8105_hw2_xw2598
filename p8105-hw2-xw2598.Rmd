@@ -119,6 +119,7 @@ precipitation_16 = read_excel("./data files/HealthyHarborWaterWheelTotals2017-9-
   head(precipitation)
 #The separate datas (2016 and 2017) respectively include 3 variables : month ,total precipitation and year.Their combination dataset(named precipitation) includes 3 variables:month,total precipitation,year
 #Key variables: total precipitation. Because this is the core of this dataset.other variables are made for organizing and grouping "precipitation".
+  # +mr.trash
 
 # total precipitation in 2017
   sum(filter(precipitation_17,month != "NA")$total)
