@@ -16,21 +16,19 @@ select(line:entry,vending,ada) %>%
   #convert the variable entry from character to logic
  #gather(key="routes_served", value = "route_value",route1:route11 ) %>% 
 mutate(
-     entry=as.character(entry),
-     entry = replace(entry,entry =="YES", "TRUE"),
-       entry =replace(entry,entry =="NO","FALSE"),
+     entry = as.character(entry),
+     entry = replace(entry,entry == "YES", "TRUE"),
+       entry = replace(entry,entry == "NO", "FALSE"),
        entry = as.logical(entry)
 )
 ```
 
 ```{r}
 #new dataset variables
-names(nyc_data) 
+names( nyc_data ) 
 #The dimension of the resulting dataset
-print("rows:")
-nrow(nyc_data)
-print("columns:")
-ncol(nyc_data)
+paste("This dataset has ", nrow(nyc_data), " rows." )
+paste("This dataset has ", ncol(nyc_data), " cololums." )
 
 ```
 
@@ -47,7 +45,7 @@ nrow(n_station)
 ada_compliant = filter(n_station, ada=="TRUE") 
   nrow(ada_compliant)
 ##The proportion of station entrances / exits without vending allow entrance
-nrow(filter(nyc_data,vending=="NO",entry=="TRUE"))/nrow(filter(nyc_data,vending=="NO"))
+nrow(filter(nyc_data,vending == "NO",entry == "TRUE"))/nrow(filter(nyc_data,vending == "NO"))
 
 ```
 There are 465 distinct stations, and there are 84 stations that are ADA compliant.The proportion of station entrances / exits without vending allow entrance is 0.377.
@@ -64,9 +62,9 @@ select(line,station_name, route_name, route_number,ada) %>%
   A_station = distinct(new_nyc_data,line,station_name,.keep_all = TRUE) 
   nrow(A_station)
 # carculate number  of  ADA compliant in stations serving A train
-  nrow(filter(A_station,ada=="TRUE"))
+  nrow(filter(A_station,ada == "TRUE"))
 # carculate proportion of  ADA compliant in stations serving A train
-  nrow(filter(A_station,ada=="TRUE"))/nrow(A_station)
+  nrow(filter(A_station,ada == "TRUE"))/nrow(A_station)
 ```
 60 distinct stations that serve the A train
 Of the stations that serve the A train, the number of ada compliant stations serving A train is , and the proportion of ADA compliant is 0.283.
@@ -80,11 +78,11 @@ Read and clean the Mr. Trash Wheel sheet:
 ```{r}
 library(readxl)
 #read data and omit columns containing notes
-trash = read_excel("./data files/HealthyHarborWaterWheelTotals2017-9-26.xlsx",range = "A2:N258") %>% 
+trash = read_excel("./data files/HealthyHarborWaterWheelTotals2018-7-28.xlsx",range = "A2:N258") %>% 
   #data clean 
   janitor::clean_names() %>% 
   #omit rows that do not include dumpster-specific data
-  filter(dumpster!="NA")
+  filter(dumpster != "NA")
 #rounds the number of sports balls and convert then into integer variables
 trash$sports_balls = as.integer(round(trash$sports_balls))
 
@@ -93,14 +91,14 @@ trash$sports_balls = as.integer(round(trash$sports_balls))
 
 ```{r}
 #Read and clean precipitation data for 2017
-precipitation_17 = read_excel("./data files/HealthyHarborWaterWheelTotals2017-9-26.xlsx",sheet = "2017 Precipitation",range = "A2:B15") %>% 
+precipitation_17 = read_excel("./data files/HealthyHarborWaterWheelTotals2018-7-28.xlsx",sheet = "2017 Precipitation",range = "A2:B15") %>% 
   janitor::clean_names() %>% 
 #omit rows without precipitation data and add a variable year
   filter(total != "NA") 
-  precipitation_17$year =  c(rep(2017,9))
+  precipitation_17$year =  c(rep(2017,13))
 
 #same pipline in 2016 
-precipitation_16 = read_excel("./data files/HealthyHarborWaterWheelTotals2017-9-26.xlsx",sheet = "2016 Precipitation",range = "A2:B15") %>%
+precipitation_16 = read_excel("./data files/HealthyHarborWaterWheelTotals2018-7-28.xlsx",sheet = "2016 Precipitation",range = "A2:B15") %>%
   janitor::clean_names() %>% 
    filter(total != "NA") 
   precipitation_16$year =  c(rep(2016,13))
@@ -113,26 +111,28 @@ precipitation_16 = read_excel("./data files/HealthyHarborWaterWheelTotals2017-9-
       year = replace(year, year == "total.16","2016"),
       year = replace(year, year == "total.17","2017")
     ) %>% 
-    filter(total != "NA")
+    filter(month != "NA")
     
 ##About these data
   head(precipitation)
-#The separate datas (2016 and 2017) respectively include 3 variables : month ,total precipitation and year.Their combination dataset(named precipitation) includes 3 variables:month,total precipitation,year
-#Key variables: total precipitation. Because this is the core of this dataset.other variables are made for organizing and grouping "precipitation".
+  tail(precipitation)
+
+#the separate datas (2016 and 2017) respectively include 3 variables : month ,total precipitation and year.Their combination dataset(named precipitation) includes 3 variables:month,total precipitation,year
+#the Mr. Trash Wheel sheet includes variables below
+  names(trash)
+#
+#Key variables:(1) Mr. Trash Wheel sheet: "weight_tons" ,"volume_cubic_yards","plastic_bottles"  ,"polystyrene","cigarette_butts" ,"glass_bottles" ,"grocery_bags" ,"chip_bags","sports_balls" ,"homes_powered", because these data need people to collect and play a core role in dataset.Other variables just work for sorting them out (2) precipitation data for 2016 and 2017: total precipitation. Because this is the core of this dataset.other variables are made for organizing and grouping "precipitation".
   
   
-  # +mr.trash
-  # change dataset
-  
+ 
 # total precipitation in 2017
-  sum(filter(precipitation_17,month != "NA")$total)
+  sum(filter(precipitation, year == 2017)$total)
 # the median number of sports balls in a dumpster in 2016
-  median(filter(trash,year=="2016")$sports_balls)
-  
+  median(filter(trash,year == "2016")$sports_balls)
   
 ```
  
-The total precipitation in 2017 is 29.93 and the median number of sports balls in a dumpster in 2016 is 26.
+The total precipitation in 2017 is 32.93 and the median number of sports balls in a dumpster in 2016 is 26.
 
 
 ##problem3
@@ -158,12 +158,6 @@ mutate(
 )
 rm(brfss_smart2010)
 ```
-@format the data to use appropriate variable names;
-@focus on the “Overall Health” topic
-@exclude variables for class, topic, question, sample size, and everything from lower confidence limit to GeoLocation
-@structure data so that values for Response (“Excellent” to “Poor”) are column names / variables which indicate the proportion of subjects with each response (which are values of Data_value in the original dataset)
-@create a new variable showing the proportion of responses that were “Excellent” or “Very Good”
-Using this dataset, do or answer the following:
 
 ```{r}
 #datatset information
