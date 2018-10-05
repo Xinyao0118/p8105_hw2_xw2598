@@ -156,7 +156,7 @@ janitor::clean_names() %>%
 mutate(
   positive_prop = excellent + very_good
 )
-
+rm(brfss_smart2010)
 ```
 @format the data to use appropriate variable names;
 @focus on the “Overall Health” topic
@@ -166,7 +166,7 @@ mutate(
 Using this dataset, do or answer the following:
 
 ```{r}
-#datatset infrmation
+#datatset information
 head(brfss)
 #unique locations
 nrow(distinct(select(brfss,locationdesc)))
@@ -175,11 +175,45 @@ nrow(distinct(select(brfss,locationabbr)))
 #top 5 observed state
 count_state = group_by(brfss,locationabbr)
 tail(arrange(count(count_state,locationabbr),n),5)
+#The median of the “Excellent” response value in 2002
+median(filter(brfss, year == "2002")$excellent, na.rm = TRUE)
 ```
 
-There are 404 unique locations are included in the dataset. Every state is represented. NJ is observed the most.
+There are 404 unique locations are included in the dataset. Every state is represented. NJ is observed the most.The median of the “Excellent” response value in 2002 is 23.6.
 
-In 2002, what is the median of the “Excellent” response value?
-Make a histogram of “Excellent” response values in the year 2002.
-Make a scatterplot showing the proportion of “Excellent” response values in New York County and Queens County (both in NY State) in each year from 2002 to 2010.
+```{r}
+#Histogram of “Excellent” response values in the year 2002
+hist_brfss = filter(brfss, year == "2002") %>% 
+  select(locationabbr,excellent)
+ggplot(hist_brfss,aes(x = excellent )) +
+  geom_histogram(alpha = 0.5,colour = "blue") +
+  scale_x_continuous(breaks = c(10, 15, 20,25,30,40), 
+                     labels = c("10", "15", "20","25","30","40"))+
+   labs(
+    title = "Histogram of “Excellent” response values in the year 2002 ",
+    x = "Excellent” response values",
+    y = "counts")
+
+```
+This histogram is skewed and  shows  that most of the data(excellet proportion) are crowded in 19-28.
+
+```{r}
+#scatterplot
+# prepare dataset
+scatt_brfss = filter(brfss, locationdesc =="NY - New York County"|locationdesc == "NY - Queens County", year<= 2010 & year >= 2002 ) %>% 
+  select(year, locationdesc, excellent)
+
+#proportion of “Excellent” response values plot
+ggplot(scatt_brfss,aes(x = year, y = excellent, color = locationdesc ))+
+  geom_point()+
+  labs(
+    title = "Proportion of “Excellent” response values in New York County and Queens County",
+    y = "Proportion of “Excellent” response values")
+
+
+```
+
+
+This scatterplot shows that the proportion of “Excellent” response values in New York County is always higher than that in Queens County. The difference is obvious and stable, which can be caused by county`s own characters.
+
 
