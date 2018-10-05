@@ -33,7 +33,12 @@ paste("This dataset has ", ncol(nyc_data), " cololums." )
 ```
 
 This dataset contains variables:
-line,station name,station latitude,station longitude,route1,route2,route3,route4,route5,route6,route7,route8,route9,route10,route11,entrance type,entry,vending,ada. My data cleaning steps: 1.Change the variables names. 2.Select the specific variables according to the requirement. 3.Change the type of the data in "entry". The dimension of the resulting dataset is 1868 rows * 19 columns.These data is not tidy enough, I suggest to gather all of the routes into one variable so I put related codes in the comment lines.
+line,station name,station latitude,station longitude,route1,route2,route3,route4,route5,route6,route7,route8,route9,route10,route11,entrance type,entry,vending,ada. 
+My data cleaning steps:
+1.Change the variables names.
+2.Select the specific variables according to the requirement. 
+3.Change the type of the data in "entry". 
+The dimension of the resulting dataset is 1868 rows * 19 columns.These data is not tidy enough, I suggest to gather all of the routes into one variable so I put related codes in the comment lines.
 
 ```{r}
 ##The number of distinct stations:
@@ -117,11 +122,16 @@ precipitation_16 = read_excel("./data files/HealthyHarborWaterWheelTotals2018-7-
   head(precipitation)
   tail(precipitation)
 
-#the separate datas (2016 and 2017) respectively include 3 variables : month ,total precipitation and year.Their combination dataset(named precipitation) includes 3 variables:month,total precipitation,year
+#the separate datas (2016 and 2017) respectively include 3 variables : month ,total precipitation and year.
+#Their combination dataset(named precipitation) includes 3 variables:month,total precipitation,year
 #the Mr. Trash Wheel sheet includes variables below
   names(trash)
 #
-#Key variables:(1) Mr. Trash Wheel sheet: "weight_tons" ,"volume_cubic_yards","plastic_bottles"  ,"polystyrene","cigarette_butts" ,"glass_bottles" ,"grocery_bags" ,"chip_bags","sports_balls" ,"homes_powered", because these data need people to collect and play a core role in dataset.Other variables just work for sorting them out (2) precipitation data for 2016 and 2017: total precipitation. Because this is the core of this dataset.other variables are made for organizing and grouping "precipitation".
+#Key variables:
+#(1) Mr. Trash Wheel sheet: "weight_tons" ,"volume_cubic_yards","plastic_bottles"  ,"polystyrene","cigarette_butts" ,"glass_bottles" ,"grocery_bags" ,"chip_bags","sports_balls" ,"homes_powered".
+#Because these data need people to collect and play a core role in dataset.Other variables just work for sorting them out
+#(2) precipitation data for 2016 and 2017: total.
+#Because total precipitation data is the core of this dataset.other variables are made for organizing and grouping "precipitation".
   
   
  
