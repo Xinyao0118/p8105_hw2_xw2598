@@ -137,8 +137,8 @@ The total precipitation in 2017 is 32.93 and the median number of sports balls i
 
 ##problem3
 ```{r}
-# install.packages("devtools")
-#devtools::install_github("p8105/p8105.datasets")
+ #install.packages("devtools")
+devtools::install_github("p8105/p8105.datasets")
 library(p8105.datasets)
 data(brfss_smart2010)
 #change object name
